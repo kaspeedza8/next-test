@@ -1,30 +1,57 @@
 'use client';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './styles.css'
-import { FaEye, FaEyeSlash, FaLock, FaUserTie } from 'react-icons/fa6';
+import { FaEye, FaEyeSlash, FaLock } from 'react-icons/fa6';
 import Image from 'next/image'
 import { useRouter } from 'next/navigation';
 import Link from 'next/link'
+import { signIn, useSession } from 'next-auth/react';
+import { MdEmail } from 'react-icons/md';
 
 function LoginPage() {
   const router = useRouter()
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [error, setError] = useState("")
   const [isShowPassword, setIsShowPassword] = useState(false)
+  const { data: session } = useSession()
+
+  useEffect(() => {
+    if (session) return router.replace('/')
+  }, [session?.user])
+
   const LockOrUnlockIcon = !isShowPassword ?
     <FaEye onClick={togglePassword} className='icon_right' /> :
     <FaEyeSlash onClick={togglePassword} className='icon_right' />
-  const [isOpenRegisterPanel, setIsOpenRegisterPanel] = useState(false)
 
   function togglePassword() {
     setIsShowPassword(!isShowPassword)
   }
 
-  function handleSubmit(e: any) {
-    e.preventDefault()
-    router.push('/test')
+  function navToRegister() {
+    router.push('/RegisterPage')
   }
 
-  function toggleRegister() {
-    setIsOpenRegisterPanel((prev) => !prev)
+  async function onClickLoginButton(e: any) {
+    e.preventDefault()
+    try {
+      const res = await signIn("credentials", {
+        email: email,
+        password: password,
+        redirect: false,
+      })
+
+      if (res?.error) {
+        setError(res.error)
+        return
+      }
+
+      router.replace('welcome')
+
+    } catch (error: any) {
+      console.log('on Error View LoginButton', error)
+      setError(error.message)
+    }
   }
 
   return (
@@ -54,10 +81,10 @@ function LoginPage() {
             }}
           >
             <Image
+              priority={true}
               src="/macbook.png"
               alt={`"Mobile developer "Rookie Dev"`}
               style={{ objectFit: "contain" }}
-              loading="lazy"
               width={300}
               height={300}
             />
@@ -68,44 +95,55 @@ function LoginPage() {
         <div className="flex-1 flex flex-col justify-between bg-white border border-blue-500">
 
           <div className='h-1/4 justify-center align-middle flex flex-col'>
-            <h1 className='text-center text-lg font-semibold'>Rookie Dev.</h1>
+            <h1 className='text-[#2883cc] text-center text-lg font-semibold'>Rookie Dev.</h1>
           </div>
 
           <div className='h-full text-center flex flex-col'>
 
             <div className='m-10'>
-              <h2>Welcome to my web application</h2>
-              <h3>Develop by Next.js 14 framework</h3>
+              <h2 className='text-slate-400 text-balance'>Welcome to my web application</h2>
+              <h3 className='text-slate-400 text-balance'>Develop by Next.js 14 framework</h3>
 
             </div>
 
 
             <form
-              onSubmit={handleSubmit}
-              className='flex flex-col p-5 px-16 mt-10'>
+              onSubmit={onClickLoginButton}
+              className='form-control flex flex-col p-5 px-16 mt-10'>
 
               <div className="wrapper">
-                <FaUserTie className='icon' />
+                <MdEmail className='icon' />
                 <input
-                  className="input border border-stone-300 my-2 p-2"
-                  placeholder='username or email'
+                  className="input_absolute input border border-stone-300 my-2 p-2 focus:border-teal-500 focus:outline-none"
+                  placeholder='email'
                   type='email'
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
 
               <div className="wrapper">
                 <FaLock className='icon' />
                 <input
-                  className="input border border-stone-300 my-2 p-2"
+                  className="input_absolute input border border-stone-300 my-2 p-2 focus:border-teal-500 focus:outline-none"
                   placeholder='password'
                   type={isShowPassword ? 'text' : 'password'}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
                 {LockOrUnlockIcon}
               </div>
 
+              <div className=''>
+                {error &&
+                  <p className='text-sm text-red-500 text-center'>{`Please check email or password again (${error})`}
+                  </p>}
+
+              </div>
+
 
               <button
-                className="bg-bluePrimary 
+                className="
+                btn btn-primary
+                bg-bluePrimary 
               hover:bg-white 
               hover:text-black 
               hover:border-cyan-500
@@ -131,7 +169,7 @@ function LoginPage() {
                   Guest mode
                 </Link>
                 <p
-                  onClick={toggleRegister}
+                  onClick={navToRegister}
                   className='cursor-pointer text-center text-balance text-sm text-gray-500 hover:text-blue-400 hover:underline'>
                   Register
                 </p>
