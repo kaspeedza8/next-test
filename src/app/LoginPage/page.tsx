@@ -7,6 +7,8 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link'
 import { signIn, useSession } from 'next-auth/react';
 import { MdEmail } from 'react-icons/md';
+import { useAppDispatch } from '@/lib/hooks';
+import { setLoading } from '@/lib/features/loading/loadingSlice';
 
 function LoginPage() {
   const router = useRouter()
@@ -15,6 +17,7 @@ function LoginPage() {
   const [error, setError] = useState("")
   const [isShowPassword, setIsShowPassword] = useState(false)
   const { data: session } = useSession()
+  const dispatch = useAppDispatch()
 
   useEffect(() => {
     if (session) return router.replace('/')
@@ -34,7 +37,9 @@ function LoginPage() {
 
   async function onClickLoginButton(e: any) {
     e.preventDefault()
+
     try {
+      dispatch(setLoading(true))
       const res = await signIn("credentials", {
         email: email,
         password: password,
@@ -46,11 +51,13 @@ function LoginPage() {
         return
       }
 
-      router.replace('welcome')
-
     } catch (error: any) {
       console.log('on Error View LoginButton', error)
       setError(error.message)
+    } finally {
+      setTimeout(() => {
+        dispatch(setLoading(false))
+      }, 1000);
     }
   }
 
@@ -68,7 +75,7 @@ function LoginPage() {
 
       <div className='absolute bg-white w-10/12 h-5/6 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex'>
 
-        <div className="flex-1 bg-[#2883cc] flex flex-col justify-center border ">
+        <div className="flex-1 bg-[#2883cc] flex flex-col justify-center shadow-md">
 
           <div
             className='flex'
@@ -92,7 +99,7 @@ function LoginPage() {
 
         </div>
 
-        <div className="flex-1 flex flex-col justify-between bg-white border border-blue-500">
+        <div className="flex-1 flex flex-col justify-between bg-white shadow-md">
 
           <div className='h-1/4 justify-center align-middle flex flex-col'>
             <h1 className='text-[#2883cc] text-center text-lg font-semibold'>Rookie Dev.</h1>
@@ -100,16 +107,16 @@ function LoginPage() {
 
           <div className='h-full text-center flex flex-col'>
 
-            <div className='m-10'>
-              <h2 className='text-slate-400 text-balance'>Welcome to my web application</h2>
-              <h3 className='text-slate-400 text-balance'>Develop by Next.js 14 framework</h3>
+            <div className='m-3'>
+              <h2 className='text-slate-600 text-balance'>Welcome to my web application</h2>
+              <h3 className='text-slate-600 text-balance'>Develop by Next.js 14 framework</h3>
 
             </div>
 
 
             <form
               onSubmit={onClickLoginButton}
-              className='form-control flex flex-col p-5 px-16 mt-10'>
+              className='form-control flex flex-col p-5 px-16 mt-5'>
 
               <div className="wrapper">
                 <MdEmail className='icon' />

@@ -7,12 +7,23 @@ import { FaUserSecret } from 'react-icons/fa'
 import { HiLogout } from 'react-icons/hi'
 import { useBearStore } from '@/store/bearStore'
 import { BiUser } from 'react-icons/bi'
+import { useAppDispatch } from '@/lib/hooks'
+import { setLoading } from '@/lib/features/loading/loadingSlice'
 function Navbar({ session }: any) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const bears = useBearStore((state) => state.bears)
+  const dispatch = useAppDispatch()
 
   function toggleMenu() {
     setIsMenuOpen(!isMenuOpen)
+  }
+
+  function handleSignOut() {
+    dispatch(setLoading(true))
+    signOut()
+    setTimeout(() => {
+      dispatch(setLoading(false))
+    }, 1000);
   }
 
   return (
@@ -75,7 +86,7 @@ function Navbar({ session }: any) {
                   <li className=''>
                     <a
                       className='btn btn-outline btn-error'
-                      onClick={() => signOut()}>
+                      onClick={handleSignOut}>
                       Logout
                     </a></li>
                 </>

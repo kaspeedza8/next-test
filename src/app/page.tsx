@@ -1,20 +1,24 @@
 "use client"
 import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Navbar from "./components/Navbar";
 import { AiOutlineCaretRight } from "react-icons/ai";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/lib/store";
 import { useAppDispatch } from "@/lib/hooks";
 import { addTitle, removeByIndex } from "@/lib/features/todos/todoSlice";
 import { useBearStore } from "@/store/bearStore";
+import { setLoading } from "@/lib/features/loading/loadingSlice";
 
 export default function Home() {
   const [yourType, setYourType] = useState('')
   const titleArr = useSelector((state: RootState) => state.todoReducer.data)
   const dispatch = useAppDispatch()
   const setCustomNumbers = useBearStore((state) => state.setCustomNumbers)
+  const bears = useBearStore((state) => state.bears)
+  const { data: session } = useSession()
+  const router = useRouter()
 
   const numPad = [
     { num: 1 },
@@ -29,8 +33,11 @@ export default function Home() {
     { num: 0 },
   ]
 
-  const { data: session } = useSession()
-  if (!session) return redirect('/LoginPage')
+  useEffect(() => {
+    if (!session) return router.replace('/LoginPage')
+  }, [session?.user])
+
+
 
   return (
     <main className="mx-auto px-0">
@@ -38,8 +45,7 @@ export default function Home() {
 
       <div className="container">
 
-        <h1 className="text-center text-lg text-fuchsia-300 mb-10 mt-5">Library stress test</h1>
-
+        <h1 className="text-center text-lg text-fuchsia-500 mb-10 mt-5">Library stress test</h1>
 
         {/* BOX TOP */}
         <div className="box-content flex justify-between">
@@ -53,7 +59,7 @@ export default function Home() {
                 onChange={(e) => setYourType(e.target.value)}
                 maxLength={20}
                 placeholder="Type something to save the word ."
-                className="input input-bordered input-primary w-full max-w-xs" />
+                className="input input-bordered input-ghost w-full max-w-xs" />
 
               <div
                 onKeyUp={() => {
@@ -92,7 +98,7 @@ export default function Home() {
           </div>
 
           <div className="box-b-side box-content flex-1 py-5 space-y-3">
-            <h2 className="text-center text-red-500">Zustand Global State Test</h2>
+            <h2 className="text-center text-red-500">Zustand Global State Test {bears}</h2>
 
             <div className="grid md:grid-cols-3 grid-cols-2 gap-4 justify-center">
               {

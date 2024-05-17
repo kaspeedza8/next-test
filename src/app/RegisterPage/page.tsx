@@ -3,7 +3,9 @@ import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import axios from 'axios'
 import { useSession } from 'next-auth/react'
-import { redirect } from 'next/navigation'
+import { redirect, useRouter } from 'next/navigation'
+import { useAppDispatch } from '@/lib/hooks'
+import { setLoading } from '@/lib/features/loading/loadingSlice'
 
 function RegisterPage() {
   const [name, setName] = useState('')
@@ -13,6 +15,8 @@ function RegisterPage() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [isPasswordConflict, setIsPasswordConflict] = useState(false)
+  const dispatch = useAppDispatch()
+  const router = useRouter()
 
   const { data: session } = useSession()
   if (session) return redirect('/')
@@ -44,7 +48,10 @@ function RegisterPage() {
       return
     }
 
+    dispatch(setLoading(true))
+
     try {
+
       const checkUserResponse = await axios.post('http://localhost:3000/api/checkUser', {
         email
       })
@@ -78,12 +85,17 @@ function RegisterPage() {
         setConfirmPassword('')
         setIsPasswordConflict(false)
         form.reset()
+        router.replace('LoginPage')
       } else {
         console.log("User registration failed.")
       }
 
     } catch (error) {
       console.log('Error during registration ', error)
+    } finally {
+      setTimeout(() => {
+        dispatch(setLoading(false))
+      }, 1000);
     }
   }
 
@@ -91,7 +103,7 @@ function RegisterPage() {
     <div className=' flex flex-col justify-center items-center h-lvh w-full'>
       <h2 className='text-lg'>Register Page</h2>
       <hr className='my-3' />
-      <form className='form-control' onSubmit={handleSubmit}>
+      <form className='form-control container md:px-40 px-10 space-y-2' onSubmit={handleSubmit}>
 
         {error && (
           <div className='bg-red-500 w-fit text-sm text-white py-1 px-3 rounded-md mt-2'>
@@ -107,13 +119,13 @@ function RegisterPage() {
 
         <input
           onChange={(e) => setName(e.target.value)}
-          className='input-ghost rounded block p-2 my-2 round-md'
+          className='input-ghost rounded block p-2 round-md'
           type='text'
           placeholder='Enter your name'
         />
         <input
           onChange={(e) => setEmail(e.target.value)}
-          className='input-ghost rounded block p-2 my-2 round-md'
+          className='input-ghost rounded block p-2 round-md'
           type='email'
           placeholder='Enter your email'
         />

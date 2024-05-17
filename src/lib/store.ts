@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import { persistStore, persistReducer } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
 import todoSlice from './features/todos/todoSlice'
+import loadingSlice from './features/loading/loadingSlice'
 
 const persistConfig = {
  key: 'root',
@@ -13,8 +14,9 @@ const todoReducer = persistReducer(persistConfig, todoSlice)
 export const makeStore = configureStore({
  reducer: {
   todoReducer,
+  loadingSlice,
  },
- middleware: (getDefaultMiddleware) =>
+ middleware: (getDefaultMiddleware: any) =>
   getDefaultMiddleware({
    serializableCheck: false,
   }),
