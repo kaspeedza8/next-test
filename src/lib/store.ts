@@ -16,7 +16,7 @@ export const makeStore = configureStore({
   todoReducer,
   loadingSlice,
  },
- middleware: (getDefaultMiddleware: any) =>
+ middleware: (getDefaultMiddleware) =>
   getDefaultMiddleware({
    serializableCheck: false,
   }),

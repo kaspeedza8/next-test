@@ -34,7 +34,7 @@ function Navbar({ session }: any) {
         <div >
           <Link
             className='flex items-center p-2'
-            href={"/"} >
+            href={"/ConsolePage"} >
             <TbBrandNextjs
               className='w-5 h-5 mr-1'
               title='Next JS'

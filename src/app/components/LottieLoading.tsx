@@ -16,7 +16,6 @@ const defaultOptions = {
 
 function LottieLoading() {
   const isLoading = useSelector((state: RootState) => state.loadingSlice.isLoading)
-  console.log('isLoading', isLoading)
 
   return (
     <>

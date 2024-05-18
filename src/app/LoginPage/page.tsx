@@ -65,12 +65,11 @@ function LoginPage() {
     <div className="flex bg">
 
       <div className="flex-1 bg-bluePrimary h-screen">
-        <p className='text-gray-400'>L1</p>
-
+        {/* <p className='text-gray-400'>L1</p> */}
       </div>
 
       <div className="flex-1 bg-[#1e80c8] h-screen">
-        <p className='text-gray-400 text-right'>R1</p>
+        {/* <p className='text-gray-400 text-right'>R1</p> */}
       </div>
 
       <div className='absolute bg-white w-10/12 h-5/6 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex'>
@@ -160,21 +159,8 @@ function LoginPage() {
               >
                 Login
               </button>
-
-              <div className='flex flex-wrap justify-between mt-1 
+              <div className='flex justify-end flex-wrap mt-2 
               '>
-                <Link
-                  href={'/test'}
-                  className='text-center text-balance text-sm
-                  text-gray-700 
-                   hover:text-orange-300 
-                  hover:underline
-                  sm:text-red-600
-                  md:text-green-400
-                  '
-                >
-                  Guest mode
-                </Link>
                 <p
                   onClick={navToRegister}
                   className='cursor-pointer text-center text-balance text-sm text-gray-500 hover:text-blue-400 hover:underline'>
