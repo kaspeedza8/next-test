@@ -3,11 +3,12 @@ import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import axios from 'axios'
 import { useSession } from 'next-auth/react'
-import { redirect, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { useAppDispatch } from '@/lib/hooks'
 import { setLoading } from '@/lib/features/loading/loadingSlice'
 
 function RegisterPage() {
+  const endpoint = process.env.ENV === 'production' ? process.env.PROD_URL : process.env.DEV_URL
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -21,6 +22,7 @@ function RegisterPage() {
   const { data: session } = useSession()
 
   useEffect(() => {
+    console.log('${endpoint}', endpoint)
     function checkSession() {
       if (session) return router.replace('/')
     }
@@ -59,7 +61,7 @@ function RegisterPage() {
 
     try {
 
-      const checkUserResponse = await axios.post('http://localhost:3000/api/checkUser', {
+      const checkUserResponse = await axios.post(`api/checkUser`, {
         email
       })
 
@@ -70,7 +72,7 @@ function RegisterPage() {
         return
       }
 
-      const res = await fetch("http://localhost:3000/api/register", {
+      const res = await fetch(`api/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
