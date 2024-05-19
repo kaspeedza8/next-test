@@ -41,6 +41,11 @@ function LoginPage() {
   async function onClickLoginButton(e: any) {
     e.preventDefault()
 
+    if (!email && !password) {
+      alert('Please enter your email address or password')
+      return
+    }
+
     try {
       dispatch(setLoading(true))
       const res = await signIn("credentials", {
