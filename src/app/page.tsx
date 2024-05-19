@@ -46,13 +46,18 @@ export default function Home() {
   ]
 
   useEffect(() => {
-    if (!session) return router.replace('/LoginPage')
+    function checkSession() {
+      if (!session) return router.replace('/LoginPage')
+    }
+    checkSession()
+    return () => { }
   }, [session?.user])
 
   useEffect(() => {
     if (food.length == 0) {
       fetchTheFood()
     }
+    return () => { }
   }, [])
 
 
@@ -61,7 +66,6 @@ export default function Home() {
       dispatch(setLoading(true))
       const res = await axios.get('https://www.themealdb.com/api/json/v1/1/categories.php')
       const resData = res.data.categories
-      console.log('resData', resData)
       resData.length > 0 && setFood(resData)
     } catch (error) {
       console.log('error', error)

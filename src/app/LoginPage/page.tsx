@@ -20,7 +20,10 @@ function LoginPage() {
   const dispatch = useAppDispatch()
 
   useEffect(() => {
-    if (session) return router.replace('/')
+    function checkSession() {
+      if (session) return router.replace('/')
+    }
+    checkSession()
   }, [session?.user])
 
   const LockOrUnlockIcon = !isShowPassword ?

@@ -19,12 +19,19 @@ function RegisterPage() {
   const router = useRouter()
 
   const { data: session } = useSession()
-  if (session) return redirect('/')
+
+  useEffect(() => {
+    function checkSession() {
+      if (session) return router.replace('/')
+    }
+    checkSession()
+  }, [session?.user])
 
   useEffect(() => {
 
     if (confirmPassword.length > 2 && password !== confirmPassword) {
       setIsPasswordConflict(true)
+      return
     } else {
       setIsPasswordConflict(false)
     }
