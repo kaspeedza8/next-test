@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import './styles.css'
 import { FaEye, FaEyeSlash, FaLock } from 'react-icons/fa6';
 import Image from 'next/image'
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import Link from 'next/link'
 import { signIn, useSession } from 'next-auth/react';
 import { MdEmail } from 'react-icons/md';
@@ -19,12 +19,9 @@ function LoginPage() {
   const { data: session } = useSession()
   const dispatch = useAppDispatch()
 
-  useEffect(() => {
-    function checkSession() {
-      if (session) return router.replace('/')
-    }
-    checkSession()
-  }, [session?.user])
+  if (session) {
+    redirect("/")
+  }
 
   const LockOrUnlockIcon = !isShowPassword ?
     <FaEye onClick={togglePassword} className='icon_right' /> :
@@ -52,7 +49,8 @@ function LoginPage() {
         email: email,
         password: password,
         redirect: false,
-      })
+      }
+      )
 
       if (res?.error) {
         setError(res.error)

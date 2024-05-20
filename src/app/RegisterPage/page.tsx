@@ -3,12 +3,12 @@ import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import axios from 'axios'
 import { useSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
+import { redirect, useRouter } from 'next/navigation'
 import { useAppDispatch } from '@/lib/hooks'
 import { setLoading } from '@/lib/features/loading/loadingSlice'
+import Image from 'next/image'
 
 function RegisterPage() {
-  const endpoint = process.env.ENV === 'production' ? process.env.PROD_URL : process.env.DEV_URL
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -21,13 +21,9 @@ function RegisterPage() {
 
   const { data: session } = useSession()
 
-  useEffect(() => {
-    console.log('${endpoint}', endpoint)
-    function checkSession() {
-      if (session) return router.replace('/')
-    }
-    checkSession()
-  }, [session?.user])
+  if (session) {
+    redirect("/")
+  }
 
   useEffect(() => {
 
@@ -109,10 +105,18 @@ function RegisterPage() {
   }
 
   return (
-    <div className=' flex flex-col justify-center items-center h-lvh w-full'>
+    <div className=' flex flex-col justify-around items-center h-lvh w-full'>
       <h2 className='text-lg'>Register Page</h2>
       <hr className='my-3' />
-      <form className='form-control container md:px-40 px-10 space-y-2' onSubmit={handleSubmit}>
+      <form className='form-control container md:px-40 px-10 space-y-2 justify-center items-center' onSubmit={handleSubmit}>
+        <Image
+          priority={true}
+          src="/registrationIco.png"
+          alt={`"Mobile developer "Rookie Dev"`}
+          style={{ objectFit: "contain" }}
+          width={64}
+          height={64}
+        />
 
         {error && (
           <div className='bg-red-500 w-fit text-sm text-white py-1 px-3 rounded-md mt-2'>
@@ -145,7 +149,7 @@ function RegisterPage() {
           placeholder='Enter your password'
           onBlur={() => setIsPasswordConflict(false)}
         />
-        {isPasswordConflict ? <p className='text-sm text-red-400 ml-1 mb-2'>passwords don't match</p> : <div className='mb-2' />}
+        {isPasswordConflict ? <p className='text-sm text-red-400 ml-1 mb-2'>passwords don't match</p> : null}
         <input
           onChange={(e) => setConfirmPassword(e.target.value)}
           className='input-ghost rounded block p-2 round-md'

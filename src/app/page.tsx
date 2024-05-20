@@ -1,6 +1,6 @@
 "use client"
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import Navbar from "./components/Navbar";
 import { AiOutlineCaretRight } from "react-icons/ai";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -45,13 +45,9 @@ export default function Home() {
     { num: 0 },
   ]
 
-  useEffect(() => {
-    function checkSession() {
-      if (!session) return router.replace('/LoginPage')
-    }
-    checkSession()
-    return () => { }
-  }, [session?.user])
+  if (!session) {
+    redirect("/LoginPage")
+  }
 
   useEffect(() => {
     if (food.length == 0) {
